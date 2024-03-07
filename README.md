@@ -12,7 +12,7 @@ The code is mainly refer to [PyTorch Examples](https://github.com/pytorch/exampl
 - build the image & load it into the K8S cluster
     ```
     cd training
-    docker build -t mnist:train
+    docker build -t mnist:train .
     kind load mnist:train
     ```
 - deploy the pod
