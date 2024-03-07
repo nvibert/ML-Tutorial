@@ -1,10 +1,10 @@
 # Training & Inference in K8S
-## Prerequisite
+## Prerequisites
 - docker
 - kubectl
 - a K8S cluster
     - You can simply create one using [kind](https://kind.sigs.k8s.io/).
-- Set up LoadBalancer
+- set up LoadBalancer
     - You can use LoadBalancer in kind cluster by [MetalLB](https://kind.sigs.k8s.io/docs/user/loadbalancer/).
 
 ## Training
@@ -41,7 +41,7 @@ We are going to deploy a Python Flask server running the MNIST Inference in K8S.
     ```
     kubectl create -f inference.yaml
     ```
-- get the external ip of the service
+- get the external IP of the service
     ```
     kubectl get svc mnist-inference-service
     ```
