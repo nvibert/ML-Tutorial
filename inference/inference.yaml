@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mnist-inference
+  labels:
+    app: mnist
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mnist
+  template:
+    metadata:
+      labels:
+        app: mnist
+    spec:
+      containers:
+      - name: mnist
+        image: mnist:inference
+        command: ['sh', '-c', 'python3 main.py']
+        resources:
+          requests:
+            memory: "600Mi"
+          limits:
+            memory: "600Mi"
+        ports:
+        - containerPort: 5000
+          name: inference-svc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mnist-inference-service
+  labels:
+    app: mnist
+spec:
+  selector:
+    app: mnist
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: inference-svc
+  type: LoadBalancer

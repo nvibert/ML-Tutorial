@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mnist-train
+spec:
+  restartPolicy: Never
+  containers:
+  - name: mnist-train
+    image: mnist:train
+    command: ['sh', '-c', 'python3 main.py --epoch 1 --save-model']
+    volumeMounts:
+    - name: model-volume
+      mountPath: /app/model
+  volumes:
+  - name: model-volume
+    hostPath:
+      path: /mnt
+      type: Directory
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: training
+            operator: In
+            values:
+            - allowed
