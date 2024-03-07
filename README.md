@@ -3,12 +3,12 @@
 - docker
 - kubectl
 - a K8S cluster
-    - You can simply create one using (kind)[https://kind.sigs.k8s.io/].
+    - You can simply create one using [kind](https://kind.sigs.k8s.io/).
 - Set up LoadBalancer
-    - You can use LoadBalancer in kind cluster by (MetalLB)[https://kind.sigs.k8s.io/docs/user/loadbalancer/].
+    - You can use LoadBalancer in kind cluster by [MetalLB](https://kind.sigs.k8s.io/docs/user/loadbalancer/).
 
 ## Training
-The code is mainly refer to https://github.com/pytorch/examples/tree/main/mnist.
+The code is mainly refer to [PyTorch Examples](https://github.com/pytorch/examples/tree/main/mnist).
 - build the image & load it into the K8S cluster
     ```
     cd training
@@ -30,7 +30,7 @@ The code is mainly refer to https://github.com/pytorch/examples/tree/main/mnist.
     ```
 
 ## Inference
-We are going to deploy a Python Flask server running the MNIST Inference in K8S
+We are going to deploy a Python Flask server running the MNIST Inference in K8S.
 - build the image & load it into the K8S cluster
     ```
     cd inference
@@ -49,4 +49,4 @@ We are going to deploy a Python Flask server running the MNIST Inference in K8S
     ```
     curl -X POST -F "file=@<image_path>" http://<externel_ip>:5000/predict
     ```
-![](docs/img/request.png)
+    ![](docs/img/request.png)
