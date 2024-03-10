@@ -6,16 +6,8 @@ spec:
   restartPolicy: Never
   containers:
   - name: mnist-train
-    image: mnist:train
-    command: ['sh', '-c', 'python3 main.py --epoch 1 --save-model']
-    volumeMounts:
-    - name: model-volume
-      mountPath: /app/model
-  volumes:
-  - name: model-volume
-    hostPath:
-      path: /mnt
-      type: Directory
+    image: irenetht/mnist:train
+    command: ['sh', '-c', 'python3 main.py --epoch 1']
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:

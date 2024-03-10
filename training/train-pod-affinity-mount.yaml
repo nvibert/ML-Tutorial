@@ -6,13 +6,8 @@ spec:
   restartPolicy: Never
   containers:
   - name: mnist-train
-    image: mnist:train
+    image: irenetht/mnist:train
     command: ['sh', '-c', 'python3 main.py --epoch 1 --save-model']
-    resources:
-      requests:
-        memory: "1000Mi"
-      limits:
-        memory: "1000Mi"
     volumeMounts:
     - name: model-volume
       mountPath: /app/model
@@ -21,3 +16,12 @@ spec:
     hostPath:
       path: /mnt
       type: Directory
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: training
+            operator: In
+            values:
+            - allowed
