@@ -19,14 +19,14 @@ The code is mainly refer to [PyTorch Examples](https://github.com/pytorch/exampl
     ```
     kubectl create -f train-pod.yaml
     ```
-- if you want to save the model
-    ```
-    kubectl create -f train-pod-mount.yaml
-    ```
 - if you want to run the pod on the specific node, for example, the node with label `training=allowed`
     ```
     kubectl label nodes kind-worker training=allowed
-    kubectl create -f train-pod-mount-affinity
+    kubectl create -f train-pod-affinity.yaml
+    ```
+- - if you want to save the model
+    ```
+    kubectl create -f train-pod-affinity-mount.yaml
     ```
 
 ## Inference
