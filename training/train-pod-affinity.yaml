@@ -6,7 +6,7 @@ spec:
   restartPolicy: Never
   containers:
   - name: mnist-train
-    image: irenetht/mnist:train # mnist:train
+    image: mnist:train
     command: ['sh', '-c', 'python3 main.py --epoch 1']
   affinity:
     nodeAffinity:

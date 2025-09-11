@@ -206,3 +206,13 @@ You can optionally deploy your kind cluster and install Cilium with the correct 
    ```bash
    cilium hubble ui
    ```
+
+
+## TO DO
+
+- Simulate an attack where a user would modify the folders - swapping the `6` folder with the `9` folder.
+- Understand who executed the commands with Tetragon.
+- Prevent data poisoning by adding a network policy?
+- Let's suppose that access to the training machine is compromised. 
+- Add a diagram of inter-communications
+- Add Hubble UI screenshot.
