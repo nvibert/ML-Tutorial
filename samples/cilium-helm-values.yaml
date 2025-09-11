@@ -1,0 +1,8 @@
+# Sample Helm values for installing Cilium with LoadBalancer and L2 Announcements
+kubeProxyReplacement: true
+l2announcements:
+  enabled: true
+ipam:
+  mode: kubernetes
+devices:
+  - eth0

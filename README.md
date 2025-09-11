@@ -115,10 +115,17 @@ You can optionally deploy your kind cluster and install Cilium with the correct 
     ```
 
 2. **Install Cilium with the required settings**
-    You can install Cilium using Helm or the Cilium CLI. Example CLI command:
-    ```bash
-    cilium install --set kubeProxyReplacement=true --set l2announcements.enabled=true --set ipam.mode=kubernetes --set devices='{eth0}'
-    ```
+     You can install Cilium using Helm or the Cilium CLI.
+     - **Cilium CLI:**
+         ```bash
+         cilium install --set kubeProxyReplacement=true --set l2announcements.enabled=true --set ipam.mode=kubernetes --set devices='{eth0}'
+         ```
+     - **Helm:**
+         Save the sample values file from `samples/cilium-helm-values.yaml` and install with:
+         ```bash
+         helm repo add cilium https://helm.cilium.io/
+         helm install cilium cilium/cilium --namespace kube-system --values samples/cilium-helm-values.yaml
+         ```
 
 3. **Apply the Cilium LoadBalancer IP Pool and L2 Announcement Policy**
     After Cilium is installed, apply the following manifests:
