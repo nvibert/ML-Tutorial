@@ -100,7 +100,6 @@ The inference step deploys a Python Flask server in Kubernetes that loads the tr
      "prediction": 7
    }
    ```
-![](docs/img/request.png)
 
 ## Optional: Deploy Cluster and Install Cilium
 
