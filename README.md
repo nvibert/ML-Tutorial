@@ -193,3 +193,16 @@ You can optionally deploy your kind cluster and install Cilium with the correct 
    kubectl apply -f samples/cilium-lb-pool.yaml
    kubectl apply -f samples/cilium-l2-policy.yaml
    ```
+
+4. **Optional: Enable Cilium Hubble (Network Observability)**
+   Hubble provides deep network visibility for your Kubernetes cluster.
+   
+   Enable Hubble with the UI:
+   ```bash
+   cilium hubble enable --ui
+   ```
+   
+   Open the Hubble UI (this will port-forward and open in your browser):
+   ```bash
+   cilium hubble ui
+   ```
