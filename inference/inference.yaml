@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: mnist
-        image: irenetht/mnist:inference # mnist:inference
+        image: mnist:inference
         command: ['sh', '-c', 'python3 main.py']
         resources:
           requests:

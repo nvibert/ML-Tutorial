@@ -1,6 +1,16 @@
 # Training & Inference in K8S
 
 This project demonstrates how to train and deploy a neural network for handwritten digit recognition using the MNIST dataset on Kubernetes. The MNIST dataset consists of 70,000 grayscale images of handwritten digits (0-9), commonly used for benchmarking machine learning models.
+
+## Getting Started
+
+First, clone this repository to your local machine:
+
+```bash
+git clone https://github.com/nvibert/ML-Tutorial.git
+cd ML-Tutorial
+```
+
 ## Prerequisites
 - Docker
 - kubectl
@@ -88,17 +98,45 @@ The inference step deploys a Python Flask server in Kubernetes that loads the tr
    kubectl get svc mnist-inference-service
    ```
 
-4. **Send an image to the server for prediction**
-   - Use `curl` to POST an image file to the API. The server will return the predicted digit as JSON.
+4. **Set the LoadBalancer IP as an environment variable**
+   - Extract the external IP and store it for easy use in subsequent commands.
    ```bash
-   curl -X POST -F "file=@data/testing/7/7030.jpg" http://172.18.255.201:5000/predict
+   export INFERENCE_IP=$(kubectl get svc mnist-inference-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+   echo "Inference service available at: $INFERENCE_IP"
+   ```
+
+5. **Send images to the server for prediction**
+   - Use `curl` to POST image files to the API. The server will return the predicted digit as JSON.
+   
+   **Test with different digits:**
+   ```bash
+   # Test digit 0
+   curl -X POST -F "file=@data/testing/0/10.jpg" http://$INFERENCE_IP:5000/predict
+   
+   # Test digit 1  
+   curl -X POST -F "file=@data/testing/1/1001.jpg" http://$INFERENCE_IP:5000/predict
+   
+   # Test digit 2
+   curl -X POST -F "file=@data/testing/2/1009.jpg" http://$INFERENCE_IP:5000/predict
+   
+   # Test digit 3
+   curl -X POST -F "file=@data/testing/3/101.jpg" http://$INFERENCE_IP:5000/predict
+   
+   # Test digit 7
+   curl -X POST -F "file=@data/testing/7/7030.jpg" http://$INFERENCE_IP:5000/predict
+   
+   # Test digit 9
+   curl -X POST -F "file=@data/testing/9/126.jpg" http://$INFERENCE_IP:5000/predict
    ```
    
-   Example response:
+   Example responses:
    ```json
-   {
-     "prediction": 7
-   }
+   {"prediction": 0}
+   {"prediction": 1}  
+   {"prediction": 2}
+   {"prediction": 3}
+   {"prediction": 7}
+   {"prediction": 9}
    ```
 
 ## Optional: Deploy Cluster and Install Cilium
@@ -120,7 +158,7 @@ You can optionally deploy your kind cluster and install Cilium with the correct 
    
    Create the cluster:
    ```bash
-   kind create cluster --config kind-config.yaml
+   kind create cluster --config samples/kind-config.yaml
    ```
 
 2. **Install Cilium with the required settings**
