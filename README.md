@@ -109,23 +109,34 @@ The inference step deploys a Python Flask server in Kubernetes that loads the tr
    - Use `curl` to POST image files to the API. The server will return the predicted digit as JSON.
    
    **Test with different digits:**
+   
+   Test digit 0:
    ```bash
-   # Test digit 0
    curl -X POST -F "file=@data/testing/0/10.jpg" http://$INFERENCE_IP:5000/predict
+   ```
    
-   # Test digit 1  
+   Test digit 1:
+   ```bash
    curl -X POST -F "file=@data/testing/1/1004.jpg" http://$INFERENCE_IP:5000/predict
+   ```
    
-   # Test digit 2
+   Test digit 2:
+   ```bash
    curl -X POST -F "file=@data/testing/2/1.jpg" http://$INFERENCE_IP:5000/predict
+   ```
    
-   # Test digit 3
+   Test digit 3:
+   ```bash
    curl -X POST -F "file=@data/testing/3/1020.jpg" http://$INFERENCE_IP:5000/predict
+   ```
    
-   # Test digit 7
+   Test digit 7:
+   ```bash
    curl -X POST -F "file=@data/testing/7/0.jpg" http://$INFERENCE_IP:5000/predict
+   ```
    
-   # Test digit 9
+   Test digit 9:
+   ```bash
    curl -X POST -F "file=@data/testing/9/1000.jpg" http://$INFERENCE_IP:5000/predict
    ```
    
