@@ -6,33 +6,33 @@ This project demonstrates how to train and deploy a neural network for handwritt
 - kubectl
 - a K8S cluster
     - You can simply create one using [kind](https://kind.sigs.k8s.io/).
-        - set up LoadBalancer
-                - Use [Cilium](https://cilium.io/) as the CNI and Cilium L2 Announcement for LoadBalancer IPs.
-                - Example Cilium L2 Announcement Policy:
-                ```yaml
-                apiVersion: "cilium.io/v2alpha1"
-                kind: CiliumL2AnnouncementPolicy
-                metadata:
-                    name: policy1
-                spec:
-                    loadBalancerIPs: true
-                    interfaces:
-                        - eth0
-                    nodeSelector:
-                        matchExpressions:
-                            - key: node-role.kubernetes.io/control-plane
-                                operator: DoesNotExist
-                ```
-                - Example Cilium LoadBalancer IP Pool:
-                ```yaml
-                apiVersion: "cilium.io/v2alpha1"
-                kind: CiliumLoadBalancerIPPool
-                metadata:
-                    name: "pool"
-                spec:
-                    blocks:
-                        - cidr: "172.18.255.200/29"
-                ```
+    - Use [Cilium](https://cilium.io/) as the CNI and Cilium L2 Announcement for LoadBalancer IPs.
+        - Example Cilium L2 Announcement Policy:
+```yaml
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumL2AnnouncementPolicy
+metadata:
+    name: policy1
+spec:
+    loadBalancerIPs: true
+    interfaces:
+        - eth0
+    nodeSelector:
+        matchExpressions:
+            - key: node-role.kubernetes.io/control-plane
+                operator: DoesNotExist
+```
+        - Example Cilium LoadBalancer IP Pool:
+
+```yaml
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumLoadBalancerIPPool
+metadata:
+    name: "pool"
+spec:
+    blocks:
+        - cidr: "172.18.255.200/29"
+```
 
 
 ## Training
@@ -93,11 +93,39 @@ We are going to deploy a Python Flask server running the MNIST Inference in K8S.
         ```
         ![](docs/img/request.png)
 
-    # Optional: Sample kind cluster config
-    This config creates a kind cluster with one control-plane node and two worker nodes, and disables the default CNI so you can install Cilium as the CNI plugin.
-    Save this to a file (e.g., `kind-config.yaml`) and create your cluster with:
+## Optional: Deploy Cluster and Install Cilium
+
+You can optionally deploy your kind cluster and install Cilium with the correct settings before applying the LoadBalancer IP Pool and L2 Announcement Policy.
+
+1. **Create your kind cluster**
+    Save the following config to a file (e.g., `kind-config.yaml`):
+    ```yaml
+    kind: Cluster
+    apiVersion: kind.x-k8s.io/v1alpha4
+    nodes:
+      - role: control-plane
+      - role: worker
+      - role: worker
+    networking:
+      disableDefaultCNI: true
+    ```
+    Create the cluster:
     ```bash
     kind create cluster --config kind-config.yaml
+    ```
+
+2. **Install Cilium with the required settings**
+    You can install Cilium using Helm or the Cilium CLI. Example CLI command:
+    ```bash
+    cilium install --set kubeProxyReplacement=true --set l2announcements.enabled=true --set ipam.mode=kubernetes --set devices='{eth0}'
+    ```
+
+3. **Apply the Cilium LoadBalancer IP Pool and L2 Announcement Policy**
+    After Cilium is installed, apply the following manifests:
+    ```bash
+    kubectl apply -f <LB-pool-manifest>.yaml
+    kubectl apply -f <L2-policy-manifest>.yaml
+    ```
     ```
     Sample config:
     ```yaml
