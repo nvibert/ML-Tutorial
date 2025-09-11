@@ -2,7 +2,7 @@
 
 This project demonstrates how to train and deploy a neural network for handwritten digit recognition using the MNIST dataset on Kubernetes. The MNIST dataset consists of 70,000 grayscale images of handwritten digits (0-9), commonly used for benchmarking machine learning models.
 ## Prerequisites
-- docker
+- Docker
 - kubectl
 - a K8S cluster
     - You can simply create one using [kind](https://kind.sigs.k8s.io/).
@@ -15,9 +15,9 @@ This project demonstrates how to train and deploy a neural network for handwritt
                 metadata:
                     name: policy1
                 spec:
-                    loadBalancerIPs: true  
+                    loadBalancerIPs: true
                     interfaces:
-                    - eth0
+                        - eth0
                     nodeSelector:
                         matchExpressions:
                             - key: node-role.kubernetes.io/control-plane
@@ -31,7 +31,7 @@ This project demonstrates how to train and deploy a neural network for handwritt
                     name: "pool"
                 spec:
                     blocks:
-                    - cidr: "172.18.255.200/29"
+                        - cidr: "172.18.255.200/29"
                 ```
 
 
