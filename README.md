@@ -114,19 +114,19 @@ The inference step deploys a Python Flask server in Kubernetes that loads the tr
    curl -X POST -F "file=@data/testing/0/10.jpg" http://$INFERENCE_IP:5000/predict
    
    # Test digit 1  
-   curl -X POST -F "file=@data/testing/1/1001.jpg" http://$INFERENCE_IP:5000/predict
+   curl -X POST -F "file=@data/testing/1/1004.jpg" http://$INFERENCE_IP:5000/predict
    
    # Test digit 2
-   curl -X POST -F "file=@data/testing/2/1009.jpg" http://$INFERENCE_IP:5000/predict
+   curl -X POST -F "file=@data/testing/2/1.jpg" http://$INFERENCE_IP:5000/predict
    
    # Test digit 3
-   curl -X POST -F "file=@data/testing/3/101.jpg" http://$INFERENCE_IP:5000/predict
+   curl -X POST -F "file=@data/testing/3/1020.jpg" http://$INFERENCE_IP:5000/predict
    
    # Test digit 7
-   curl -X POST -F "file=@data/testing/7/7030.jpg" http://$INFERENCE_IP:5000/predict
+   curl -X POST -F "file=@data/testing/7/0.jpg" http://$INFERENCE_IP:5000/predict
    
    # Test digit 9
-   curl -X POST -F "file=@data/testing/9/126.jpg" http://$INFERENCE_IP:5000/predict
+   curl -X POST -F "file=@data/testing/9/1000.jpg" http://$INFERENCE_IP:5000/predict
    ```
    
    Example responses:
