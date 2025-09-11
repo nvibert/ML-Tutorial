@@ -17,7 +17,8 @@ cd ML-Tutorial
 - a K8S cluster
     - You can simply create one using [kind](https://kind.sigs.k8s.io/).
     - Use [Cilium](https://cilium.io/) as the CNI and Cilium L2 Announcement for LoadBalancer IPs.
-        - Example Cilium L2 Announcement Policy:
+
+Example Cilium L2 Announcement Policy and LB IP Pool:
 
 ```yaml
 apiVersion: "cilium.io/v2alpha1"
@@ -33,7 +34,6 @@ spec:
             - key: node-role.kubernetes.io/control-plane
                 operator: DoesNotExist
 ```
-        - Example Cilium LoadBalancer IP Pool:
 
 ```yaml
 apiVersion: "cilium.io/v2alpha1"
@@ -44,7 +44,6 @@ spec:
     blocks:
         - cidr: "172.18.255.200/29"
 ```
-
 
 ## Training
 The training step uses a PyTorch implementation of a Convolutional Neural Network (CNN) to learn from the MNIST dataset. The model is trained to recognize digits from images and save the trained weights for later inference.
@@ -214,5 +213,7 @@ You can optionally deploy your kind cluster and install Cilium with the correct 
 - Understand who executed the commands with Tetragon.
 - Prevent data poisoning by adding a network policy?
 - Let's suppose that access to the training machine is compromised. 
-- Add a diagram of inter-communications
+- Add a diagram of inter-communications between client and model.
 - Add Hubble UI screenshot.
+- Add Gateway API to introduce a new model. Refer back to the failed introduction of Chat GPT5 and the new to bring back Chat GPT 4-o model.
+- Consider swapping MNIST to [Fashionm-Mnist](https://github.com/zalandoresearch/fashion-mnist)
