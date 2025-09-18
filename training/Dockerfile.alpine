@@ -1,0 +1,61 @@
+FROM python:3.9-alpine
+
+WORKDIR /app
+
+# Install system dependencies for ARM64/x86_64 compatibility
+RUN apk add --no-cache --virtual .build-deps \
+    gcc \
+    g++ \
+    musl-dev \
+    linux-headers \
+    libc-dev \
+    libffi-dev \
+    gfortran \
+    openblas-dev \
+    && apk add --no-cache \
+    libstdc++ \
+    ca-certificates \
+    libgomp \
+    openblas
+
+# Copy requirements first for better Docker layer caching
+COPY requirements.txt .
+
+# Upgrade pip and install wheel for better compatibility
+RUN pip install --upgrade pip wheel setuptools
+
+# Install numpy first (required for torch)
+RUN pip install --no-cache-dir numpy
+
+# Install PyTorch with explicit CPU-only and no dependencies issues
+ENV TORCH_CUDA_ARCH_LIST=""
+RUN pip install --no-cache-dir \
+    torch==2.0.1+cpu \
+    torchvision==0.15.2+cpu \
+    --extra-index-url https://download.pytorch.org/whl/cpu \
+    --no-deps && \
+    pip install --no-cache-dir \
+    pillow \
+    typing_extensions \
+    sympy \
+    networkx \
+    jinja2 \
+    fsspec
+
+# Remove build dependencies to reduce image size
+RUN apk del .build-deps
+
+# Create model directory
+RUN mkdir -p /app/model
+
+# Copy application code
+COPY main.py .
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S -D -H -u 1001 -s /sbin/nologin -G appgroup appuser && \
+    chown -R appuser:appgroup /app
+USER appuser
+
+# Use exec form for better signal handling
+CMD ["python", "main.py"]

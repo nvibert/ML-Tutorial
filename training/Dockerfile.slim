@@ -1,0 +1,38 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Install minimal system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better Docker layer caching
+COPY requirements.txt .
+
+# Upgrade pip and install packages
+RUN pip install --no-cache-dir --upgrade pip wheel
+
+# Install PyTorch CPU-only version (much smaller)
+RUN pip install --no-cache-dir \
+    torch \
+    torchvision \
+    --index-url https://download.pytorch.org/whl/cpu
+
+# Remove build dependencies to reduce image size
+RUN apt-get purge -y gcc g++ && apt-get autoremove -y
+
+# Create model directory
+RUN mkdir -p /app/model
+
+# Copy application code
+COPY main.py .
+
+# Create non-root user for security
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+RUN chown -R appuser:appgroup /app
+USER appuser
+
+# Use exec form for better signal handling
+CMD ["python", "main.py"]

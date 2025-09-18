@@ -1,0 +1,62 @@
+FROM python:3.9-alpine
+
+WORKDIR /app
+
+# Install system dependencies needed for Python packages
+RUN apk add --no-cache --virtual .build-deps \
+    gcc \
+    g++ \
+    musl-dev \
+    linux-headers \
+    libc-dev \
+    libffi-dev \
+    jpeg-dev \
+    zlib-dev \
+    freetype-dev \
+    lcms2-dev \
+    openjpeg-dev \
+    tiff-dev \
+    tk-dev \
+    tcl-dev \
+    && apk add --no-cache \
+    libstdc++ \
+    ca-certificates \
+    jpeg \
+    zlib \
+    freetype \
+    lcms2 \
+    openjpeg \
+    tiff
+
+# Copy requirements first for better Docker layer caching
+COPY requirements.txt .
+
+# Upgrade pip and install wheel for better compatibility
+RUN pip install --upgrade pip wheel
+
+# Install Python packages with more flexible versions
+RUN pip install --no-cache-dir \
+    torch \
+    torchvision \
+    --extra-index-url https://download.pytorch.org/whl/cpu \
+    && pip install --no-cache-dir \
+    flask \
+    pillow \
+    numpy
+
+# Remove build dependencies to reduce image size
+RUN apk del .build-deps
+
+# Copy application code
+COPY app/ ./app/
+COPY main.py .
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S -D -H -u 1001 -s /sbin/nologin -G appgroup appuser
+USER appuser
+
+EXPOSE 5000
+
+# Use exec form for better signal handling
+CMD ["python", "main.py"]
