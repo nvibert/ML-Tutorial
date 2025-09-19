@@ -17,7 +17,6 @@ spec:
       containers:
       - name: mnist
         image: irenetht/mnist:inference
-        imagePullPolicy: Never
         command: ['sh', '-c', 'python3 main.py']
         resources:
           requests:
