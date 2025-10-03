@@ -8,7 +8,7 @@ class MNISTPredictor {
         this.canvas = null;
         this.ctx = null;
         this.isDrawing = false;
-        this.gameMode = 'free';
+        this.gameMode = 'challenge';
         this.currentChallenge = null;
         this.score = {
             correct: 0,

@@ -25,8 +25,8 @@
             </div>
         </div>
 
-        <!-- Mode Selector -->
-        <div class="row justify-content-center mb-4">
+        <!-- Mode Selector - Hidden, defaults to Brain Teaser mode -->
+        <div class="row justify-content-center mb-4 d-none">
             <div class="col-md-8">
                 <div class="card shadow-lg border-0">
                     <div class="card-body text-center">
@@ -34,13 +34,13 @@
                             <i class="fas fa-gamepad text-primary"></i> Choose Your Challenge
                         </h4>
                         <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="gameMode" id="freeMode" value="free" checked>
+                            <input type="radio" class="btn-check" name="gameMode" id="freeMode" value="free">
                             <label class="btn btn-outline-primary btn-lg" for="freeMode">
                                 <i class="fas fa-pencil-alt"></i> Free Draw
                                 <small class="d-block">Draw anything, I'll guess!</small>
                             </label>
 
-                            <input type="radio" class="btn-check" name="gameMode" id="challengeMode" value="challenge">
+                            <input type="radio" class="btn-check" name="gameMode" id="challengeMode" value="challenge" checked>
                             <label class="btn btn-outline-success btn-lg" for="challengeMode">
                                 <i class="fas fa-brain"></i> Brain Teaser Mode
                                 <small class="d-block">Answer fun questions by drawing!</small>
