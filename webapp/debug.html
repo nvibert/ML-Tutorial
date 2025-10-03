@@ -21,7 +21,7 @@
     <div class="info">
         <strong>MNIST Format Requirements:</strong><br>
         • 28×28 pixels, grayscale<br>
-        • 0 = background (white), 255 = foreground (black)<br>
+        • 0 = background (black), 255 = foreground (white digits)<br>
         • Digits should be centered and normalized<br>
     </div>
 
@@ -29,7 +29,7 @@
         <div class="debug-section">
             <h3>Drawing Canvas (280×280)</h3>
             <div class="canvas-container">
-                <canvas id="drawCanvas" width="280" height="280"></canvas><br>
+                <canvas id="drawCanvas" width="280" height="280" style="background: black;"></canvas><br>
                 <button onclick="clearCanvas()">Clear</button>
                 <button onclick="analyzeImage()">Analyze</button>
             </div>
@@ -70,8 +70,8 @@
         drawCtx.lineWidth = 15;
         drawCtx.lineCap = 'round';
         drawCtx.lineJoin = 'round';
-        drawCtx.strokeStyle = '#000000';
-        drawCtx.fillStyle = '#FFFFFF';
+        drawCtx.strokeStyle = '#FFFFFF';  // White digits
+        drawCtx.fillStyle = '#000000';   // Black background
         drawCtx.imageSmoothingEnabled = true;
         drawCtx.imageSmoothingQuality = 'high';
         
@@ -164,13 +164,13 @@
                 <strong>Format Analysis:</strong><br>
                 • Pixel range: ${minVal} - ${maxVal} (should be 0-255)<br>
                 • Non-white pixels: ${nonWhitePixels}/784 (${coverage}%)<br>
-                • Background: ${minVal === 255 ? '✅ White (255)' : '⚠️ Not pure white'}<br>
-                • Foreground: ${maxVal === 0 ? '✅ Black (0)' : '⚠️ Not pure black'}<br>
+                • Background: ${minVal === 0 ? '✅ Black (0)' : '⚠️ Not pure black'}<br>
+                • Foreground: ${maxVal === 255 ? '✅ White (255)' : '⚠️ Not pure white'}<br>
                 • Coverage: ${coverage > 5 ? '✅ Good' : '⚠️ Too sparse'} (${coverage}%)<br><br>
                 
                 <strong>MNIST Compatibility:</strong><br>
-                ${minVal === 255 && maxVal === 0 ? '✅ Perfect format match!' : 
-                  minVal > 200 && maxVal < 100 ? '✅ Good contrast' :
+                ${minVal === 0 && maxVal === 255 ? '✅ Perfect format match!' : 
+                  minVal < 50 && maxVal > 200 ? '✅ Good contrast' :
                   '⚠️ May need better contrast'}
             `;
             

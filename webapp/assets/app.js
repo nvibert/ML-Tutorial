@@ -36,8 +36,8 @@ class MNISTPredictor {
         this.ctx.lineWidth = 15;  // Slightly thinner for better detail when scaled to 28x28
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
-        this.ctx.strokeStyle = '#000000';  // Black foreground (MNIST: 255)
-        this.ctx.fillStyle = '#FFFFFF';   // White background (MNIST: 0)
+        this.ctx.strokeStyle = '#FFFFFF';  // White foreground/digits (MNIST: 255)
+        this.ctx.fillStyle = '#000000';   // Black background (MNIST: 0)
         
         // Improve anti-aliasing for smoother lines
         this.ctx.imageSmoothingEnabled = true;

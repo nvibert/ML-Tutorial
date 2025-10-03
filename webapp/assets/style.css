@@ -85,6 +85,7 @@
 #drawingCanvas {
     cursor: crosshair;
     transition: all 0.3s ease;
+    background-color: #000000 !important; /* Black background for MNIST format */
 }
 
 #drawingCanvas:hover {
