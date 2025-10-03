@@ -19,9 +19,6 @@ spec:
         image: mnist:webapp
         ports:
         - containerPort: 80
-        env:
-        - name: INFERENCE_SERVICE_URL
-          value: "http://mnist-inference-service:5000"
 ---
 apiVersion: v1
 kind: Service
