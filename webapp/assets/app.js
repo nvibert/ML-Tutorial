@@ -32,16 +32,12 @@ class MNISTPredictor {
         this.canvas = document.getElementById('drawingCanvas');
         this.ctx = this.canvas.getContext('2d');
         
-        // Set up canvas for drawing - optimized for MNIST 28x28 recognition
-        this.ctx.lineWidth = 15;  // Slightly thinner for better detail when scaled to 28x28
+        // Set up canvas for drawing
+        this.ctx.lineWidth = 20;
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
-        this.ctx.strokeStyle = '#FFFFFF';  // White foreground/digits (MNIST: 255)
-        this.ctx.fillStyle = '#000000';   // Black background (MNIST: 0)
-        
-        // Improve anti-aliasing for smoother lines
-        this.ctx.imageSmoothingEnabled = true;
-        this.ctx.imageSmoothingQuality = 'high';
+        this.ctx.strokeStyle = '#000000';
+        this.ctx.fillStyle = '#FFFFFF';
         
         // Fill with white background
         this.clearCanvas();
@@ -215,14 +211,14 @@ class MNISTPredictor {
         $('#loadingState').removeClass('d-none');
 
         try {
-            // Convert canvas to blob - use PNG for lossless quality (better for digit recognition)
+            // Convert canvas to blob
             const blob = await new Promise(resolve => {
-                this.canvas.toBlob(resolve, 'image/png');
+                this.canvas.toBlob(resolve, 'image/jpeg', 0.8);
             });
 
             // Create form data
             const formData = new FormData();
-            formData.append('file', blob, 'drawing.png');
+            formData.append('file', blob, 'drawing.jpg');
 
             // Make prediction request
             const response = await fetch(`${this.apiEndpoint}/predict`, {
@@ -241,9 +237,6 @@ class MNISTPredictor {
             }
 
             this.displayPrediction(result.prediction);
-            
-            // Optional: Show what the model "sees" for debugging
-            this.showModelPreview(blob);
             
         } catch (error) {
             console.error('Prediction error:', error);
@@ -279,19 +272,47 @@ class MNISTPredictor {
         
         if (isCorrect) {
             this.score.correct++;
+            
+            // Random success messages
+            const successMessages = [
+                { title: "Brilliant! 🧠✨", text: "You got it right! Smart cookie! 🍪" },
+                { title: "Fantastic! 🌟", text: "Your brain is on fire! 🔥" },
+                { title: "Awesome! 🎯", text: "Bulls-eye! Perfect answer! 🎪" },
+                { title: "Genius! 🤓", text: "You're a digit-drawing master! 🎨" },
+                { title: "Excellent! 🏆", text: "That's exactly right! Champion! 👑" },
+                { title: "Amazing! ⭐", text: "Your drawing skills are incredible! 🎭" }
+            ];
+            
+            const success = successMessages[Math.floor(Math.random() * successMessages.length)];
+            $('#successResult h4').text(success.title);
+            $('#successResult p').text(success.text);
             $('#successResult').removeClass('d-none');
             $('#failResult').addClass('d-none');
             $(this.canvas).addClass('canvas-success');
             this.playSound('successSound');
             this.createConfetti();
-            this.addEmojiReaction('🎉');
+            this.addEmojiReaction(['🎉', '🎊', '🌟', '✨', '🏆', '👏'][Math.floor(Math.random() * 6)]);
         } else {
             this.score.incorrect++;
+            
+            // Random failure messages
+            const failMessages = [
+                { title: "Hmm, not quite! 🤔", text: "Think again or try a new brain teaser!" },
+                { title: "Oops! 😊", text: "That's not it, but keep trying!" },
+                { title: "Almost! 😉", text: "You're getting warmer! Try again!" },
+                { title: "Not this time! 🙃", text: "Don't give up, you've got this!" },
+                { title: "Close! 🎯", text: "Think a bit more and try again!" },
+                { title: "Nope! 😄", text: "That's okay, everyone learns differently!" }
+            ];
+            
+            const fail = failMessages[Math.floor(Math.random() * failMessages.length)];
+            $('#failResult h4').text(fail.title);
+            $('#failResult p').text(fail.text);
             $('#successResult').addClass('d-none');
             $('#failResult').removeClass('d-none');
             $(this.canvas).addClass('canvas-error shake');
             this.playSound('failSound');
-            this.addEmojiReaction('😅');
+            this.addEmojiReaction(['😅', '🤷', '😊', '🙃', '😉'][Math.floor(Math.random() * 5)]);
             
             // Remove shake animation
             setTimeout(() => {
@@ -321,8 +342,71 @@ class MNISTPredictor {
     }
 
     generateNewChallenge() {
-        this.currentChallenge = Math.floor(Math.random() * 10);
-        $('#targetDigit').text(this.currentChallenge).addClass('pulse');
+        // Fun questions with answers 0-9
+        const challenges = [
+            { question: "How many lives does a cat have minus one? 🐱", answer: 8 },
+            { question: "How many legs does an ant have? 🐜", answer: 6 },
+            { question: "How many fingers on one hand? ✋", answer: 5 },
+            { question: "What comes before 1? 🤔", answer: 0 },
+            { question: "How many sides does a triangle have? 📐", answer: 3 },
+            { question: "How many wheels on a bicycle? 🚲", answer: 2 },
+            { question: "How many days in a week? 📅", answer: 7 },
+            { question: "How many legs does a spider have? 🕷️", answer: 8 },
+            { question: "Lucky number that rhymes with 'mine'? 🍀", answer: 9 },
+            { question: "How many sides does a square have? ⬜", answer: 4 },
+            { question: "What's half of two? ➗", answer: 1 },
+            { question: "How many eyes do you have? 👀", answer: 2 },
+            { question: "How many noses does a human have? 👃", answer: 1 },
+            { question: "How many toes on both feet? 🦶", answer: 10, displayAnswer: 0 }, // Special case: show 0 for 10
+            { question: "How many sides does a pentagon have? ⭐", answer: 5 },
+            { question: "How many strings on a guitar? 🎸", answer: 6 },
+            { question: "How many colors in a rainbow? 🌈", answer: 7 },
+            { question: "How many planets from the sun is Earth? 🌍", answer: 3 },
+            { question: "How many minutes in half an hour divided by 10? ⏰", answer: 3 },
+            { question: "How many seasons in a year? 🍂", answer: 4 },
+            { question: "What digit looks like a snake? 🐍", answer: 2 },
+            { question: "How many thumbs on both hands? 👍", answer: 2 },
+            { question: "What number rhymes with 'heaven'? ☁️", answer: 7 },
+            { question: "How many lives does a cat really have? (mythology) 🐾", answer: 9 },
+            { question: "What comes after 8? ➡️", answer: 9 },
+            { question: "How many wheels on a tricycle? 🚴", answer: 3 },
+            { question: "What's the loneliest number? 😢", answer: 1 },
+            { question: "How many tentacles does an octopus have? 🐙", answer: 8 },
+            { question: "What do you get when you eat zero cookies? 🍪", answer: 0 },
+            { question: "How many horns does a unicorn have? 🦄", answer: 1 },
+            { question: "How many lives does a video game character usually have? 🎮", answer: 3 },
+            { question: "How many points does a star usually have? ⭐", answer: 5 },
+            { question: "How many wings does a butterfly have? 🦋", answer: 4 },
+            { question: "What's the first digit in your phone number? (just kidding!) What comes after 5? 📱", answer: 6 },
+            { question: "How many continents are there? 🌍", answer: 7 },
+            { question: "What's 5 + 4? 🧮", answer: 9 },
+            { question: "How many holes in a donut? 🍩", answer: 1 },
+            { question: "What's 10 - 10? ➖", answer: 0 },
+            { question: "How many beats in a waltz? 🎵", answer: 3 },
+            { question: "How many chambers in a human heart? ❤️", answer: 4 },
+            { question: "How many Olympic rings? 🏅", answer: 5 },
+            { question: "What's the square root of 4? 📏", answer: 2 },
+            { question: "How many deadly sins? 😈", answer: 7 },
+            { question: "What's 2 × 4? ✖️", answer: 8 },
+            { question: "How many letters in 'cat'? 🐱", answer: 3 },
+            { question: "What's the loneliest number that you'll ever do? 🎵", answer: 1 },
+            { question: "How many reindeer pull Santa's sleigh? (including Rudolph) 🦌", answer: 9 },
+            { question: "What comes before 'teen' numbers? 🔢", answer: 9 },
+            { question: "How many sides on a dice? 🎲", answer: 6 },
+            { question: "What's half of 16? ➗", answer: 8 },
+            { question: "How many musicians in a quartet? 🎼", answer: 4 },
+            { question: "What number is considered unlucky? 🚫", answer: 13, displayAnswer: 3 },
+            { question: "How many players on a basketball team on court? 🏀", answer: 5 }
+        ];
+        
+        const challenge = challenges[Math.floor(Math.random() * challenges.length)];
+        this.currentChallenge = challenge.answer;
+        const displayAnswer = challenge.displayAnswer !== undefined ? challenge.displayAnswer : challenge.answer;
+        
+        // Update the UI with the question
+        $('#challengeInstructions .alert-heading').html('<i class="fas fa-brain"></i> Brain Teaser:');
+        $('#challengeInstructions p').html(`${challenge.question}<br><strong>Draw your answer:</strong>`);
+        $('#targetDigit').text(displayAnswer).addClass('pulse');
         
         // Remove pulse animation after it completes
         setTimeout(() => {
@@ -435,43 +519,6 @@ class MNISTPredictor {
                 confetti.remove();
             }, 5000);
         }
-    }
-
-    showModelPreview(blob) {
-        // Create a preview of what the model sees (28x28 version)
-        const img = new Image();
-        img.onload = () => {
-            // Create a temporary canvas for 28x28 preview
-            const previewCanvas = document.createElement('canvas');
-            previewCanvas.width = 28;
-            previewCanvas.height = 28;
-            const previewCtx = previewCanvas.getContext('2d');
-            
-            // Draw the image scaled down to 28x28
-            previewCtx.drawImage(img, 0, 0, 28, 28);
-            
-            // Create a larger preview for display (280x280)
-            const displayCanvas = document.createElement('canvas');
-            displayCanvas.width = 140;
-            displayCanvas.height = 140;
-            const displayCtx = displayCanvas.getContext('2d');
-            displayCtx.imageSmoothingEnabled = false; // Pixelated look
-            displayCtx.drawImage(previewCanvas, 0, 0, 140, 140);
-            
-            // Show in console for debugging
-            console.log('🔍 Model Preview: What the AI sees (28x28 scaled up)');
-            console.log('Canvas Data URL:', displayCanvas.toDataURL());
-            
-            // Optional: Add to page for visual debugging (uncomment if needed)
-            /*
-            const preview = $('<div class="model-preview position-fixed" style="top: 10px; right: 10px; z-index: 9999; background: white; padding: 10px; border: 2px solid #007bff; border-radius: 8px;"><h6>Model Preview (28x28)</h6></div>');
-            preview.append(displayCanvas);
-            $('body').append(preview);
-            setTimeout(() => preview.remove(), 5000);
-            */
-        };
-        
-        img.src = URL.createObjectURL(blob);
     }
 }
 

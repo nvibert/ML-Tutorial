@@ -42,8 +42,8 @@
 
                             <input type="radio" class="btn-check" name="gameMode" id="challengeMode" value="challenge">
                             <label class="btn btn-outline-success btn-lg" for="challengeMode">
-                                <i class="fas fa-trophy"></i> Challenge Mode
-                                <small class="d-block">Can you draw what I ask?</small>
+                                <i class="fas fa-brain"></i> Brain Teaser Mode
+                                <small class="d-block">Answer fun questions by drawing!</small>
                             </label>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
                             <h6 class="alert-heading">
                                 <i class="fas fa-bullseye"></i> Your Challenge:
                             </h6>
-                            <p class="mb-0">Draw the digit: <span id="targetDigit" class="badge bg-success fs-4">?</span></p>
+                            <p class="mb-2">Draw the digit: <span id="targetDigit" class="badge bg-success fs-4">?</span></p>
                         </div>
 
                         <!-- Canvas Container -->
@@ -122,14 +122,14 @@
                             <!-- Challenge Mode Result -->
                             <div id="challengeResult" class="d-none">
                                 <div id="successResult" class="alert alert-success d-none">
-                                    <i class="fas fa-check-circle fa-2x mb-2"></i>
-                                    <h4>Excellent! 🎉</h4>
-                                    <p class="mb-0">You drew the digit perfectly!</p>
+                                    <i class="fas fa-brain fa-2x mb-2 text-success"></i>
+                                    <h4>Brilliant! 🧠✨</h4>
+                                    <p class="mb-0">You got it right! Smart cookie! 🍪</p>
                                 </div>
                                 <div id="failResult" class="alert alert-danger d-none">
-                                    <i class="fas fa-times-circle fa-2x mb-2"></i>
-                                    <h4>Not quite! 😅</h4>
-                                    <p class="mb-0">Try again or get a new challenge!</p>
+                                    <i class="fas fa-thinking fa-2x mb-2"></i>
+                                    <h4>Hmm, not quite! 🤔</h4>
+                                    <p class="mb-0">Think again or try a new brain teaser!</p>
                                 </div>
                             </div>
                         </div>
@@ -152,7 +152,7 @@
                         <!-- Challenge Mode Controls -->
                         <div id="challengeControls" class="d-none mt-3">
                             <button id="newChallengeBtn" class="btn btn-success">
-                                <i class="fas fa-sync-alt"></i> New Challenge
+                                <i class="fas fa-lightbulb"></i> New Brain Teaser
                             </button>
                         </div>
                     </div>
