@@ -32,12 +32,16 @@ class MNISTPredictor {
         this.canvas = document.getElementById('drawingCanvas');
         this.ctx = this.canvas.getContext('2d');
         
-        // Set up canvas for drawing
-        this.ctx.lineWidth = 20;
+        // Set up canvas for drawing - optimized for MNIST 28x28 recognition
+        this.ctx.lineWidth = 15;  // Slightly thinner for better detail when scaled to 28x28
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
-        this.ctx.strokeStyle = '#000000';
-        this.ctx.fillStyle = '#FFFFFF';
+        this.ctx.strokeStyle = '#000000';  // Black foreground (MNIST: 255)
+        this.ctx.fillStyle = '#FFFFFF';   // White background (MNIST: 0)
+        
+        // Improve anti-aliasing for smoother lines
+        this.ctx.imageSmoothingEnabled = true;
+        this.ctx.imageSmoothingQuality = 'high';
         
         // Fill with white background
         this.clearCanvas();
@@ -211,14 +215,14 @@ class MNISTPredictor {
         $('#loadingState').removeClass('d-none');
 
         try {
-            // Convert canvas to blob
+            // Convert canvas to blob - use PNG for lossless quality (better for digit recognition)
             const blob = await new Promise(resolve => {
-                this.canvas.toBlob(resolve, 'image/jpeg', 0.8);
+                this.canvas.toBlob(resolve, 'image/png');
             });
 
             // Create form data
             const formData = new FormData();
-            formData.append('file', blob, 'drawing.jpg');
+            formData.append('file', blob, 'drawing.png');
 
             // Make prediction request
             const response = await fetch(`${this.apiEndpoint}/predict`, {
@@ -237,6 +241,9 @@ class MNISTPredictor {
             }
 
             this.displayPrediction(result.prediction);
+            
+            // Optional: Show what the model "sees" for debugging
+            this.showModelPreview(blob);
             
         } catch (error) {
             console.error('Prediction error:', error);
@@ -428,6 +435,43 @@ class MNISTPredictor {
                 confetti.remove();
             }, 5000);
         }
+    }
+
+    showModelPreview(blob) {
+        // Create a preview of what the model sees (28x28 version)
+        const img = new Image();
+        img.onload = () => {
+            // Create a temporary canvas for 28x28 preview
+            const previewCanvas = document.createElement('canvas');
+            previewCanvas.width = 28;
+            previewCanvas.height = 28;
+            const previewCtx = previewCanvas.getContext('2d');
+            
+            // Draw the image scaled down to 28x28
+            previewCtx.drawImage(img, 0, 0, 28, 28);
+            
+            // Create a larger preview for display (280x280)
+            const displayCanvas = document.createElement('canvas');
+            displayCanvas.width = 140;
+            displayCanvas.height = 140;
+            const displayCtx = displayCanvas.getContext('2d');
+            displayCtx.imageSmoothingEnabled = false; // Pixelated look
+            displayCtx.drawImage(previewCanvas, 0, 0, 140, 140);
+            
+            // Show in console for debugging
+            console.log('🔍 Model Preview: What the AI sees (28x28 scaled up)');
+            console.log('Canvas Data URL:', displayCanvas.toDataURL());
+            
+            // Optional: Add to page for visual debugging (uncomment if needed)
+            /*
+            const preview = $('<div class="model-preview position-fixed" style="top: 10px; right: 10px; z-index: 9999; background: white; padding: 10px; border: 2px solid #007bff; border-radius: 8px;"><h6>Model Preview (28x28)</h6></div>');
+            preview.append(displayCanvas);
+            $('body').append(preview);
+            setTimeout(() => preview.remove(), 5000);
+            */
+        };
+        
+        img.src = URL.createObjectURL(blob);
     }
 }
 
