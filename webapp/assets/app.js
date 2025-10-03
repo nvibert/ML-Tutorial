@@ -361,7 +361,6 @@ class MNISTPredictor {
             { question: "What's half of two? ➗", answer: 1 },
             { question: "How many eyes do you have? 👀", answer: 2 },
             { question: "How many noses does a human have? 👃", answer: 1 },
-            { question: "How many toes on both feet? 🦶", answer: 10, displayAnswer: 0 }, // Special case: show 0 for 10
             { question: "How many sides does a pentagon have? ⭐", answer: 5 },
             { question: "How many strings on a guitar? 🎸", answer: 6 },
             { question: "How many colors in a rainbow? 🌈", answer: 7 },
@@ -399,7 +398,6 @@ class MNISTPredictor {
             { question: "How many sides on a dice? 🎲", answer: 6 },
             { question: "What's half of 16? ➗", answer: 8 },
             { question: "How many musicians in a quartet? 🎼", answer: 4 },
-            { question: "What number is considered unlucky? 🚫", answer: 13, displayAnswer: 3 },
             { question: "How many players on a basketball team on court? 🏀", answer: 5 }
         ];
         
