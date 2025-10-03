@@ -32,14 +32,18 @@ class MNISTPredictor {
         this.canvas = document.getElementById('drawingCanvas');
         this.ctx = this.canvas.getContext('2d');
         
-        // Set up canvas for drawing
-        this.ctx.lineWidth = 20;
+        // Set up canvas for drawing - optimized for MNIST 28x28 recognition
+        this.ctx.lineWidth = 15;  // Slightly thinner for better detail when scaled to 28x28
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
-        this.ctx.strokeStyle = '#000000';
-        this.ctx.fillStyle = '#FFFFFF';
+        this.ctx.strokeStyle = '#FFFFFF';  // White foreground/digits (MNIST: 255)
+        this.ctx.fillStyle = '#000000';   // Black background (MNIST: 0)
         
-        // Fill with white background
+        // Improve anti-aliasing for smoother lines
+        this.ctx.imageSmoothingEnabled = true;
+        this.ctx.imageSmoothingQuality = 'high';
+        
+        // Fill with black background
         this.clearCanvas();
     }
 
