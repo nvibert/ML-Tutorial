@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNIST Format Debug Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-container { display: flex; gap: 20px; align-items: flex-start; }
+        .debug-section { border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
+        .canvas-container { text-align: center; }
+        canvas { border: 2px solid #333; background: white; }
+        .info { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .pixel-data { font-family: monospace; font-size: 10px; max-height: 200px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 MNIST Format Debug Tool</h1>
+    <p>This tool helps verify that our canvas drawings match the MNIST format specification.</p>
+    
+    <div class="info">
+        <strong>MNIST Format Requirements:</strong><br>
+        • 28×28 pixels, grayscale<br>
+        • 0 = background (white), 255 = foreground (black)<br>
+        • Digits should be centered and normalized<br>
+    </div>
+
+    <div class="debug-container">
+        <div class="debug-section">
+            <h3>Drawing Canvas (280×280)</h3>
+            <div class="canvas-container">
+                <canvas id="drawCanvas" width="280" height="280"></canvas><br>
+                <button onclick="clearCanvas()">Clear</button>
+                <button onclick="analyzeImage()">Analyze</button>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h3>Model Input (28×28)</h3>
+            <div class="canvas-container">
+                <canvas id="modelCanvas" width="140" height="140"></canvas><br>
+                <small>28×28 scaled up 5x (pixelated)</small>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h3>Analysis</h3>
+            <div id="analysis">
+                <p>Draw a digit and click "Analyze" to see the format analysis.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="debug-section" style="margin-top: 20px;">
+        <h3>Pixel Data Preview (First 5 rows)</h3>
+        <div id="pixelData" class="pixel-data">
+            No data yet...
+        </div>
+    </div>
+
+    <script>
+        const drawCanvas = document.getElementById('drawCanvas');
+        const drawCtx = drawCanvas.getContext('2d');
+        const modelCanvas = document.getElementById('modelCanvas');
+        const modelCtx = modelCanvas.getContext('2d');
+        
+        let isDrawing = false;
+
+        // Setup drawing canvas
+        drawCtx.lineWidth = 15;
+        drawCtx.lineCap = 'round';
+        drawCtx.lineJoin = 'round';
+        drawCtx.strokeStyle = '#000000';
+        drawCtx.fillStyle = '#FFFFFF';
+        drawCtx.imageSmoothingEnabled = true;
+        drawCtx.imageSmoothingQuality = 'high';
+        
+        modelCtx.imageSmoothingEnabled = false; // Pixelated display
+        
+        clearCanvas();
+
+        // Drawing events
+        drawCanvas.addEventListener('mousedown', startDrawing);
+        drawCanvas.addEventListener('mousemove', draw);
+        drawCanvas.addEventListener('mouseup', stopDrawing);
+        drawCanvas.addEventListener('mouseout', stopDrawing);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = drawCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            drawCtx.lineTo(x, y);
+            drawCtx.stroke();
+            drawCtx.beginPath();
+            drawCtx.moveTo(x, y);
+        }
+
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                drawCtx.beginPath();
+            }
+        }
+
+        function clearCanvas() {
+            drawCtx.fillRect(0, 0, drawCanvas.width, drawCanvas.height);
+            drawCtx.beginPath();
+            modelCtx.clearRect(0, 0, modelCanvas.width, modelCanvas.height);
+            document.getElementById('analysis').innerHTML = '<p>Draw a digit and click "Analyze" to see the format analysis.</p>';
+            document.getElementById('pixelData').textContent = 'No data yet...';
+        }
+
+        function analyzeImage() {
+            // Create 28x28 version
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = 28;
+            tempCanvas.height = 28;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Draw scaled down version
+            tempCtx.drawImage(drawCanvas, 0, 0, 28, 28);
+            
+            // Display scaled up version
+            modelCtx.clearRect(0, 0, modelCanvas.width, modelCanvas.height);
+            modelCtx.drawImage(tempCanvas, 0, 0, 140, 140);
+            
+            // Analyze pixel data
+            const imageData = tempCtx.getImageData(0, 0, 28, 28);
+            const pixels = imageData.data;
+            
+            let minVal = 255, maxVal = 0, totalPixels = 0, nonWhitePixels = 0;
+            let pixelText = '';
+            
+            for (let y = 0; y < 28; y++) {
+                if (y < 5) { // Only show first 5 rows
+                    let rowText = `Row ${y.toString().padStart(2, '0')}: `;
+                    for (let x = 0; x < 28; x++) {
+                        const idx = (y * 28 + x) * 4;
+                        const gray = Math.round((pixels[idx] + pixels[idx + 1] + pixels[idx + 2]) / 3);
+                        if (x < 10) rowText += gray.toString().padStart(3, '0') + ' ';
+                    }
+                    pixelText += rowText + '...\n';
+                }
+                
+                for (let x = 0; x < 28; x++) {
+                    const idx = (y * 28 + x) * 4;
+                    const gray = Math.round((pixels[idx] + pixels[idx + 1] + pixels[idx + 2]) / 3);
+                    minVal = Math.min(minVal, gray);
+                    maxVal = Math.max(maxVal, gray);
+                    totalPixels++;
+                    if (gray < 250) nonWhitePixels++;
+                }
+            }
+            
+            const coverage = ((nonWhitePixels / totalPixels) * 100).toFixed(1);
+            
+            const analysis = `
+                <strong>Format Analysis:</strong><br>
+                • Pixel range: ${minVal} - ${maxVal} (should be 0-255)<br>
+                • Non-white pixels: ${nonWhitePixels}/784 (${coverage}%)<br>
+                • Background: ${minVal === 255 ? '✅ White (255)' : '⚠️ Not pure white'}<br>
+                • Foreground: ${maxVal === 0 ? '✅ Black (0)' : '⚠️ Not pure black'}<br>
+                • Coverage: ${coverage > 5 ? '✅ Good' : '⚠️ Too sparse'} (${coverage}%)<br><br>
+                
+                <strong>MNIST Compatibility:</strong><br>
+                ${minVal === 255 && maxVal === 0 ? '✅ Perfect format match!' : 
+                  minVal > 200 && maxVal < 100 ? '✅ Good contrast' :
+                  '⚠️ May need better contrast'}
+            `;
+            
+            document.getElementById('analysis').innerHTML = analysis;
+            document.getElementById('pixelData').textContent = pixelText;
+        }
+    </script>
+</body>
+</html>
