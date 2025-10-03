@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 MNIST Digit Predictor - Fun Edition!</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="assets/style.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-primary">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row">
+            <div class="col-12 text-center py-4">
+                <h1 class="display-4 text-white mb-0">
+                    <i class="fas fa-brain text-warning bounce"></i> 
+                    MNIST Digit Predictor
+                </h1>
+                <p class="lead text-white-50">Draw digits and let AI guess what you drew!</p>
+            </div>
+        </div>
+
+        <!-- Mode Selector -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body text-center">
+                        <h4 class="card-title mb-4">
+                            <i class="fas fa-gamepad text-primary"></i> Choose Your Challenge
+                        </h4>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="gameMode" id="freeMode" value="free" checked>
+                            <label class="btn btn-outline-primary btn-lg" for="freeMode">
+                                <i class="fas fa-pencil-alt"></i> Free Draw
+                                <small class="d-block">Draw anything, I'll guess!</small>
+                            </label>
+
+                            <input type="radio" class="btn-check" name="gameMode" id="challengeMode" value="challenge">
+                            <label class="btn btn-outline-success btn-lg" for="challengeMode">
+                                <i class="fas fa-trophy"></i> Challenge Mode
+                                <small class="d-block">Can you draw what I ask?</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div class="row justify-content-center">
+            <!-- Drawing Canvas -->
+            <div class="col-lg-6 col-md-8 mb-4">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-palette"></i> Drawing Canvas
+                        </h5>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <!-- Challenge Mode Instructions -->
+                        <div id="challengeInstructions" class="alert alert-success d-none mb-3" role="alert">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-bullseye"></i> Your Challenge:
+                            </h6>
+                            <p class="mb-0">Draw the digit: <span id="targetDigit" class="badge bg-success fs-4">?</span></p>
+                        </div>
+
+                        <!-- Canvas Container -->
+                        <div class="canvas-container position-relative mb-3">
+                            <canvas id="drawingCanvas" width="280" height="280" class="border border-3 rounded shadow-sm bg-white"></canvas>
+                            <div id="canvasOverlay" class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+                                <div class="text-muted">
+                                    <i class="fas fa-mouse-pointer fa-2x mb-2"></i>
+                                    <br>Start Drawing!
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Canvas Controls -->
+                        <div class="d-flex justify-content-center gap-2 mb-3">
+                            <button id="clearCanvas" class="btn btn-warning">
+                                <i class="fas fa-eraser"></i> Clear
+                            </button>
+                            <button id="predictBtn" class="btn btn-primary" disabled>
+                                <i class="fas fa-magic"></i> Predict!
+                            </button>
+                        </div>
+
+                        <!-- Drawing Instructions -->
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> 
+                            Draw a digit (0-9) in the canvas above. Make it big and clear!
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="col-lg-6 col-md-8 mb-4">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-success text-white text-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-robot"></i> AI Prediction
+                        </h5>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <!-- Prediction Display -->
+                        <div id="predictionResult" class="d-none">
+                            <div class="mb-3">
+                                <h2 class="text-primary mb-0">I think you drew:</h2>
+                                <div id="predictedDigit" class="display-1 text-success fw-bold">?</div>
+                            </div>
+                            
+                            <!-- Challenge Mode Result -->
+                            <div id="challengeResult" class="d-none">
+                                <div id="successResult" class="alert alert-success d-none">
+                                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                                    <h4>Excellent! 🎉</h4>
+                                    <p class="mb-0">You drew the digit perfectly!</p>
+                                </div>
+                                <div id="failResult" class="alert alert-danger d-none">
+                                    <i class="fas fa-times-circle fa-2x mb-2"></i>
+                                    <h4>Not quite! 😅</h4>
+                                    <p class="mb-0">Try again or get a new challenge!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div id="loadingState" class="d-none">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="text-muted">🤔 Analyzing your masterpiece...</p>
+                        </div>
+
+                        <!-- Initial State -->
+                        <div id="initialState">
+                            <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
+                            <h4 class="text-muted">Ready to predict!</h4>
+                            <p class="text-muted">Draw something and click "Predict!" to see what the AI thinks.</p>
+                        </div>
+
+                        <!-- Challenge Mode Controls -->
+                        <div id="challengeControls" class="d-none mt-3">
+                            <button id="newChallengeBtn" class="btn btn-success">
+                                <i class="fas fa-sync-alt"></i> New Challenge
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Score Panel for Challenge Mode -->
+                <div id="scorePanel" class="card shadow-lg border-0 mt-3 d-none">
+                    <div class="card-header bg-warning text-dark text-center">
+                        <h6 class="mb-0">
+                            <i class="fas fa-star"></i> Your Score
+                        </h6>
+                    </div>
+                    <div class="card-body text-center py-2">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="text-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    <div class="fw-bold" id="correctCount">0</div>
+                                    <small>Correct</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-danger">
+                                    <i class="fas fa-times-circle"></i>
+                                    <div class="fw-bold" id="incorrectCount">0</div>
+                                    <small>Wrong</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-primary">
+                                    <i class="fas fa-percentage"></i>
+                                    <div class="fw-bold" id="accuracy">0%</div>
+                                    <small>Accuracy</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div class="row">
+            <div class="col-12">
+                <div id="connectionStatus" class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-wifi"></i> 
+                    Connecting to inference service at <code>mnist-inference-service:5000</code>...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sound Effects (hidden audio elements) -->
+    <audio id="successSound" preload="auto">
+        <!-- We'll create this sound programmatically -->
+    </audio>
+    <audio id="failSound" preload="auto">
+        <!-- We'll create this sound programmatically -->
+    </audio>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="assets/app.js"></script>
+</body>
+</html>

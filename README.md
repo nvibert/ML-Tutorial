@@ -2,6 +2,19 @@
 
 This project demonstrates how to train and deploy a neural network for handwritten digit recognition using the MNIST dataset on Kubernetes. The MNIST dataset consists of 70,000 grayscale images of handwritten digits (0-9), commonly used for benchmarking machine learning models.
 
+## 🎨 New: Interactive Web Application!
+
+We've added a fun, interactive web application that lets users draw digits and get real-time AI predictions! The web app features:
+
+- **Two Game Modes**: Free drawing and challenge mode
+- **Interactive Canvas**: Draw digits with mouse or touch
+- **Real-time Predictions**: Instant AI feedback on your drawings
+- **Fun Animations**: Bouncing elements, confetti, and visual effects
+- **Score Tracking**: Challenge mode with accuracy statistics
+- **Mobile Friendly**: Responsive design that works on all devices
+
+👉 **[Check out the Web App documentation](webapp/README.md)** for setup instructions and features!
+
 ## Getting Started
 
 First, clone this repository to your local machine:
@@ -104,7 +117,20 @@ The inference step deploys a Python Flask server in Kubernetes that loads the tr
    echo "Inference service available at: $INFERENCE_IP"
    ```
 
-5. **Send images to the server for prediction**
+5. **Use the Interactive Web App (Recommended!) 🎨**
+   - Deploy the fun web application for an interactive experience:
+   ```bash
+   cd webapp
+   docker build -t mnist:webapp .
+   kind load docker-image mnist:webapp
+   kubectl apply -f webapp.yaml
+   
+   # Get the web app URL
+   export WEBAPP_IP=$(kubectl get svc mnist-webapp-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+   echo "🎨 Web app available at: http://$WEBAPP_IP"
+   ```
+   
+   **OR send images to the server for prediction via curl**
    - Use `curl` to POST image files to the API. The server will return the predicted digit as JSON.
    
    **Test with different digits:**
