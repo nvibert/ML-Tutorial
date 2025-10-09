@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: mnist:webapp
+        image: raphinkcisco/mnist:webapp
         ports:
         - containerPort: 80
 ---
@@ -27,10 +27,11 @@ metadata:
   labels:
     app: mnist-webapp
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
   - port: 80
     targetPort: 80
     protocol: TCP
+    nodePort: 32042
   selector:
     app: mnist-webapp
