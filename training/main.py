@@ -1,11 +1,13 @@
 from __future__ import print_function
 import argparse
+from sys import flags
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
+from poison_data import poison_labels
 
 
 class Net(nn.Module):
@@ -95,6 +97,8 @@ def main():
                         help='how many batches to wait before logging training status')
     parser.add_argument('--save-model', action='store_true', default=False,
                         help='For Saving the current Model')
+    parser.add_argument('--poison-labels', action='store_true', default=False,
+                        help='Poison MNIST labels by swapping 6s and 9s')
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     use_mps = not args.no_mps and torch.backends.mps.is_available()
@@ -121,10 +125,36 @@ def main():
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
         ])
-    dataset1 = datasets.MNIST('../data', train=True, download=True,
+    
+    # First, download the data (without loading into dataset objects yet)
+    print("📥 Downloading MNIST data...")
+    datasets.MNIST('../data', train=True, download=True)
+    datasets.MNIST('../data', train=False, download=True)
+    print("✅ Data downloaded!")
+    
+    if args.poison_labels:
+        # Clear any processed data cache to ensure we read from raw files
+        import os
+        processed_dir = '../data/MNIST/processed'
+        if os.path.exists(processed_dir):
+            print("🧹 Clearing processed data cache...")
+            import shutil
+            shutil.rmtree(processed_dir)
+            print("✅ Cache cleared!")
+    
+        # Now poison the labels BEFORE creating dataset objects
+        print("🏴‍☠️ Poisoning MNIST labels (swapping 6s and 9s)...")
+        poison_labels('../data/MNIST/raw/train-labels-idx1-ubyte')
+        poison_labels('../data/MNIST/raw/t10k-labels-idx1-ubyte')
+        print("✅ Label poisoning complete!")
+    
+    # Now create dataset objects with the poisoned data
+    print("📊 Loading datasets with poisoned labels...")
+    dataset1 = datasets.MNIST('../data', train=True, download=False,
                        transform=transform)
-    dataset2 = datasets.MNIST('../data', train=False,
+    dataset2 = datasets.MNIST('../data', train=False, download=False,
                        transform=transform)
+    
     train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs)
     test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 

@@ -1,0 +1,299 @@
+/* Custom CSS for MNIST Digit Predictor */
+
+/* Gradient Background */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+/* Animations */
+@keyframes bounce {
+    0%, 20%, 53%, 80%, 100% {
+        transform: translate3d(0,0,0);
+    }
+    40%, 43% {
+        transform: translate3d(0, -15px, 0);
+    }
+    70% {
+        transform: translate3d(0, -7px, 0);
+    }
+    90% {
+        transform: translate3d(0, -3px, 0);
+    }
+}
+
+.bounce {
+    animation: bounce 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+.shake {
+    animation: shake 0.5s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Canvas Styling */
+.canvas-container {
+    display: inline-block;
+    position: relative;
+}
+
+#drawingCanvas {
+    cursor: crosshair;
+    transition: all 0.3s ease;
+    background-color: #000000 !important; /* Black background for MNIST format */
+}
+
+#drawingCanvas:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+#canvasOverlay {
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Card Hover Effects */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Button Animations */
+.btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* Prediction Display */
+#predictedDigit {
+    font-size: 6rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.5s ease;
+}
+
+.digit-reveal {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* Score Animation */
+.score-update {
+    animation: pulse 0.5s ease-in-out;
+}
+
+/* Loading Spinner Custom Colors */
+.spinner-border {
+    animation-duration: 0.8s;
+}
+
+/* Alert Animations */
+.alert {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Success/Fail Animations */
+.success-animation {
+    animation: bounce 1s ease-in-out;
+}
+
+.fail-animation {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Game Mode Toggle */
+.btn-check:checked + .btn {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    #drawingCanvas {
+        width: 100%;
+        height: auto;
+        max-width: 280px;
+    }
+    
+    #predictedDigit {
+        font-size: 4rem;
+    }
+}
+
+/* Connection Status */
+#connectionStatus {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    max-width: 400px;
+    margin: 0;
+}
+
+.connection-success {
+    background-color: #d4edda !important;
+    border-color: #c3e6cb !important;
+    color: #155724 !important;
+}
+
+.connection-error {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+    color: #721c24 !important;
+}
+
+/* Canvas Drawing States */
+.canvas-drawing #canvasOverlay {
+    opacity: 0;
+}
+
+.canvas-empty #canvasOverlay {
+    opacity: 1;
+}
+
+/* Tooltip Animations */
+.tooltip {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Confetti Animation for Success */
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: #f0f;
+    animation: confetti-fall 3s linear infinite;
+    z-index: 9999;
+}
+
+/* Glowing Effect for Active Elements */
+.glow {
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.6);
+    animation: pulse 2s infinite;
+}
+
+/* Fun Emoji Reactions */
+.emoji-reaction {
+    font-size: 2rem;
+    position: absolute;
+    animation: fadeInUp 0.5s ease-out;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Mode-specific styling */
+.challenge-mode .card-header {
+    background: linear-gradient(45deg, #28a745, #20c997) !important;
+}
+
+.free-mode .card-header {
+    background: linear-gradient(45deg, #007bff, #6f42c1) !important;
+}
+
+/* Canvas Effects */
+.canvas-glow {
+    box-shadow: 0 0 30px rgba(0, 123, 255, 0.5);
+    border-color: #007bff !important;
+}
+
+.canvas-success {
+    box-shadow: 0 0 30px rgba(40, 167, 69, 0.5);
+    border-color: #28a745 !important;
+}
+
+.canvas-error {
+    box-shadow: 0 0 30px rgba(220, 53, 69, 0.5);
+    border-color: #dc3545 !important;
+}

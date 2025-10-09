@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mnist-webapp
+  labels:
+    app: mnist-webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mnist-webapp
+  template:
+    metadata:
+      labels:
+        app: mnist-webapp
+    spec:
+      containers:
+      - name: webapp
+        image: mnist:webapp
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mnist-webapp-service
+  labels:
+    app: mnist-webapp
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: mnist-webapp

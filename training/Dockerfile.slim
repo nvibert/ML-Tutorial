@@ -28,11 +28,12 @@ RUN mkdir -p /app/model
 
 # Copy application code
 COPY main.py .
+COPY poison_data.py .
 
 # Create non-root user for security
-RUN groupadd -r appgroup && useradd -r -g appgroup appuser
-RUN chown -R appuser:appgroup /app
-USER appuser
+#RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+#RUN chown -R appuser:appgroup /app
+#USER appuser
 
 # Use exec form for better signal handling
 CMD ["python", "main.py"]
