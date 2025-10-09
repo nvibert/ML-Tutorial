@@ -6,15 +6,64 @@
 
 set -e
 
+# Default configuration
+API_URL="http://localhost:5000/predict"
+DATA_DIR_BASE="data/testing"
+
+# Parse command line arguments
+DIGIT=""
+while [ $# -gt 0 ]; do
+    case $1 in
+        --api-url)
+            API_URL="$2"
+            shift 2
+            ;;
+        --data-dir)
+            DATA_DIR_BASE="$2"
+            shift 2
+            ;;
+        -h|--help)
+            echo "Usage: $0 <digit> [options]"
+            echo ""
+            echo "Arguments:"
+            echo "  <digit>          Digit to test (0-9)"
+            echo ""
+            echo "Options:"
+            echo "  --api-url URL    API endpoint URL (default: http://localhost:5000/predict)"
+            echo "  --data-dir DIR   Base data directory (default: data/testing)"
+            echo "  -h, --help       Show this help message"
+            echo ""
+            echo "Examples:"
+            echo "  $0 6"
+            echo "  $0 9 --api-url http://localhost:8080/predict"
+            echo "  $0 6 --data-dir /path/to/test/images"
+            exit 0
+            ;;
+        -*)
+            echo "Error: Unknown option $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+        *)
+            if [ -z "$DIGIT" ]; then
+                DIGIT="$1"
+            else
+                echo "Error: Too many arguments"
+                echo "Use --help for usage information"
+                exit 1
+            fi
+            shift
+            ;;
+    esac
+done
+
 # Check if digit argument is provided
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <digit>"
-    echo "Example: $0 6"
-    echo "Tests all images for the specified digit (0-9)"
+if [ -z "$DIGIT" ]; then
+    echo "Error: Digit argument is required"
+    echo "Usage: $0 <digit> [options]"
+    echo "Use --help for more information"
     exit 1
 fi
-
-DIGIT=$1
 
 # Validate digit input
 if ! [[ "$DIGIT" =~ ^[0-9]$ ]]; then
@@ -22,9 +71,8 @@ if ! [[ "$DIGIT" =~ ^[0-9]$ ]]; then
     exit 1
 fi
 
-# Configuration
-API_URL="http://localhost:5000/predict"
-DATA_DIR="data/testing/$DIGIT"
+# Set the full data directory path
+DATA_DIR="$DATA_DIR_BASE/$DIGIT"
 
 # Colors for output
 RED='\033[0;31m'
