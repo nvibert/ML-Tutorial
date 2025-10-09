@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from app.inference import predict_class
+from app.inference import predict_class, refresh_model
 
 app = Flask(__name__)
 
@@ -22,6 +22,11 @@ def predict():
         return jsonify({'prediction': result})
     except Exception as e:
         return jsonify({'error': str(e)})
+
+@app.route('/refresh')
+def refresh():
+    refresh_model()
+    return 'Model refreshed successfully\n'
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
