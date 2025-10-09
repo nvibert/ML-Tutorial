@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: mnist:webapp
+        image: raphinkcisco/mnist:webapp
         ports:
         - containerPort: 80
 ---
